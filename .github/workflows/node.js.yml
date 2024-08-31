@@ -44,7 +44,7 @@ jobs:
         host: '192.168.1.45'
         port: 22  # Specify your SSH port here, default is 22
         username: 'nizar'
-        password: ${{ secrets.SSH_PASSWORD }}  # Store the password securely in GitHub Secrets
+        password: 'Nizar1234!'  # Store the password securely in GitHub Secrets
         script: |
           cd /Projects/nodeBase  # Adjust the path to your application directory on the server
           git pull origin main   # Pull the latest changes from your Git repository

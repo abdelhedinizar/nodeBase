@@ -49,4 +49,3 @@ jobs:
           git pull origin main   # Pull the latest changes from your Git repository
           npm install            # Install any new dependencies
           npm start              # Rebuild the project (if necessary)
-          pm2 restart all        # Restart the application using PM2 (or your preferred process manager)

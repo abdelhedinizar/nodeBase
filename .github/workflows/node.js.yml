@@ -45,7 +45,7 @@ jobs:
         username: 'nizar'
         password: 'Nizar1234!'  # Store the password securely in GitHub Secrets
         script: |
-          cd Projects/nodeBase  # Adjust the path to your application directory on the server
+          cd /home/nizar/Projects/nodeBase  # Adjust the path to your application directory on the server
           git pull origin main   # Pull the latest changes from your Git repository
           npm install            # Install any new dependencies
           npm start              # Rebuild the project (if necessary)

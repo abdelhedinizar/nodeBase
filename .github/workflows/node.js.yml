@@ -41,7 +41,7 @@ jobs:
     - name: Deploy to Server
       uses: appleboy/ssh-action@master
       with:
-        host: '192.168.1.45' # IP address
+        host: '176.186.35.243' # IP address
         username: 'nizar'
         password: 'Nizar1234!'  # Store the password securely in GitHub Secrets
         script: |

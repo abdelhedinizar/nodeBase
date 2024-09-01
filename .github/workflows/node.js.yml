@@ -41,9 +41,9 @@ jobs:
     - name: Deploy to Server
       uses: appleboy/ssh-action@master
       with:
-        host: '176.186.35.243' # IP address
-        username: 'nizar'
-        password: 'Nizar1234!'  # Store the password securely in GitHub Secrets
+        host: ${{ secrets.PROD_IP }} # IP address
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD}}  # Store the password securely in GitHub Secrets
         script: |
           cd /home/nizar/Projects/nodeBase  # Adjust the path to your application directory on the server
           git pull origin main   # Pull the latest changes from your Git repository

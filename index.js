@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
   res.write('</head>');
   res.write('<body>');
   res.write('<h1> Welcome to Node Base</h1>');
-  res.write('<h2>Mahdi ya bouterma kbira :D</h2>'); 
+  res.write('<h2>Development in progress !</h2>'); 
   res.write('</body>');
   res.end('</html>');
 });

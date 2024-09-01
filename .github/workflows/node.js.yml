@@ -50,3 +50,4 @@ jobs:
           npm install            # Install any new dependencies
           pm2 start npm --name "nodeBase" -- start  # Start the app using PM2 (in background)
           pm2 save               # Save the PM2 process list
+          pm2 restart all

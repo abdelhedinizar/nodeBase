@@ -1,5 +1,5 @@
 const getAllUsers = (req, res) => {
-  res.status(200).send('List of users');
+  res.status(200).send('Hello Elliot et Khaled :D !');
 };
 
 const getUserById = (req, res) => {

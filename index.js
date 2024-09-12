@@ -9,7 +9,7 @@ const app = express();
 
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Allow only this origin
+  origin: ['http://localhost:3000', 'http://nozworld.zapto.org:3000'], // Allow only this origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow these HTTP methods
   credentials: true, // Allow cookies to be sent
   optionsSuccessStatus: 204 // Some legacy browsers choke on 204

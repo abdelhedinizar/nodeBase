@@ -21,7 +21,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.status(200).send('Welcome to Node Base');
+  res.status(200).send('Welcome to Node Base 2');
 });
 
 app.use((req, res, next) => {

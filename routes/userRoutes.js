@@ -9,6 +9,11 @@ const {
 
 const route = express.Router();
 
+route.param('id', (req, res, next, val) => {
+  console.log(`User id is ${val}`);
+  next();
+});
+
 route.route('/').get(getAllUsers).post(createUser);
 route.route('/:id').get(getUserById).patch(updateUser).delete(deleteUser);
 

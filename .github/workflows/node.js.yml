@@ -52,7 +52,7 @@ jobs:
             git reset --hard origin/main  # Forcefully pull the latest changes
             npm cache clean --force
             npm install            # Install any new dependencies
-            pm2 stop nodeBase  # Stop the old process
-            pm2 delete nodeBase  # Remove it from the PM2 process list
+            pm2 stop nodeBase || true  # Stop the old process if it exists
+            pm2 delete nodeBase || true  # Remove it from the PM2 process list if it exists           
             pm2 start npm --name "nodeBase" -- start  # Start the new version
             pm2 save

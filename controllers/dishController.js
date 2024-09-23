@@ -46,9 +46,24 @@ const createDish = async (req, res) => {
     });
   }
 };
-const updateDish = (req, res) => {
-  console.log(req.body);
-  res.status(200).send('User updated');
+const updateDish = async (req, res) => {
+  try {
+    const dish = await Dish.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        dish
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
 const deleteDish = (req, res) => {

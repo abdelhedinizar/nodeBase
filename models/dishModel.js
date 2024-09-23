@@ -9,6 +9,10 @@ const DishSchema = new mangoose.Schema({
     type: String,
     required: [true, 'A dish must have ingredients'],
   },
+  category: {
+    type: String,
+    required: [true, 'A dish must have a category'],
+  },
   image: {
     type: String,
     required: [true, 'A dish must have an image'],

@@ -2,13 +2,35 @@ const Dish = require('./../models/dishModel');
 
 const getAllDishs = async (req, res) => {
   try {
-    console.log(req.query);
-     const queryObj = { ...req.query };
-     if (queryObj.price) {
-      queryObj.price = String(queryObj.price);
+    const queryObj = { ...req.query };
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach((el) => delete queryObj[el]);
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    let query = Dish.find(JSON.parse(queryStr));
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      query.sort(sortBy);
     }
-    console.log('Query:', queryObj);
-    const dishs = await Dish.find(queryObj);
+
+    if (req.query.fields) {
+      query = query.select(req.query.fields.split(',').join(' '));
+    } else {
+      query = query.select('-__v');
+    }
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+
+    if (req.query.page) {
+      const numDishs = await query.countDocuments();
+      if (skip >= numDishs) throw new Error('This page does not exist');
+    }
+
+    const dishs = await query;
     res.status(200).json({
       status: 'success',
       length: dishs.length,

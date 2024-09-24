@@ -2,11 +2,17 @@ const Dish = require('./../models/dishModel');
 
 const getAllDishs = async (req, res) => {
   try {
-    const Dishs = await Dish.find();
+    console.log(req.query);
+     const queryObj = { ...req.query };
+     if (queryObj.price) {
+      queryObj.price = String(queryObj.price);
+    }
+    console.log('Query:', queryObj);
+    const dishs = await Dish.find(queryObj);
     res.status(200).json({
       status: 'success',
-      length: Dishs.length,
-      data: { Dishs },
+      length: dishs.length,
+      data: { dishs },
     });
   } catch (e) {
     res.status(400).json({
@@ -55,7 +61,7 @@ const updateDish = async (req, res) => {
     res.status(200).json({
       status: 'success',
       data: {
-        dish
+        dish,
       },
     });
   } catch (err) {
@@ -66,8 +72,18 @@ const updateDish = async (req, res) => {
   }
 };
 
-const deleteDish = (req, res) => {
-  res.status(204).send('User deleted');
+const deleteDish = async (req, res) => {
+  try {
+    await Dish.findByIdAndDelete(req.params.id);
+    res.status(204).json({
+      status: 'success',
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
 module.exports = {

@@ -21,6 +21,19 @@ const DishSchema = new mangoose.Schema({
     type: Number,
     required: [true, 'A dish must have a price'],
   },
+  ratingsAverage: {
+    type: Number,
+    default: 4.5,
+  },
+  ratingsQuantity: {
+    type: Number,
+    default: 0,
+  },
+  priceDiscount: Number,
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const Dish = mangoose.model('Dishs', DishSchema);

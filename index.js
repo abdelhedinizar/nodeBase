@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const userRouter = require('./routes/userRoutes');
 const dishRouter = require('./routes/dishRoutes');
+const categoryRouter = require('./routes/categoryRoutes');
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/dishs', dishRouter);
+app.use('/api/v1/categories', categoryRouter);
 
 module.exports = app;

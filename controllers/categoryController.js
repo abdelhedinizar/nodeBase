@@ -1,8 +1,16 @@
 const Category = require('./../models/CategoryModel');
+const APIFeatures = require('./../utils/APIFeatures');
 
 const getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find();
+
+    const features = new APIFeatures(Category.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const categories = await features.query;
     res.status(200).json({
       status: 'success',
       length: categories.length,

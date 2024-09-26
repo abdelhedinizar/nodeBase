@@ -8,12 +8,15 @@ const categoryRouter = require('./routes/categoryRoutes');
 
 const app = express();
 
-
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://nozworld.zapto.org:3000','http://192.168.1.152:3000'], // Allow only this origin
+  origin: [
+    'http://localhost:3000',
+    'http://nozworld.zapto.org:3000',
+    'http://192.168.1.152:3000',
+  ], // Allow only this origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow these HTTP methods
   credentials: true, // Allow cookies to be sent
-  optionsSuccessStatus: 204 // Some legacy browsers choke on 204
+  optionsSuccessStatus: 204, // Some legacy browsers choke on 204
 };
 
 app.use(cors(corsOptions));
@@ -34,5 +37,12 @@ app.use((req, res, next) => {
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/dishs', dishRouter);
 app.use('/api/v1/categories', categoryRouter);
+
+app.all('*', (req, res) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server!`,
+  });
+});
 
 module.exports = app;

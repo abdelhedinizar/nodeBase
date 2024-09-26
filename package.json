@@ -6,12 +6,14 @@
   "scripts": {
     "test": "mocha",
     "start": "node server.js",
-    "start:prod": "NODE_ENV=production node server.js"
+    "start:prod": "NODE_ENV=production node server.js",
+    "debug": "ndb server.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "mocha": "^10.7.3"
+    "mocha": "^10.7.3",
+    "ndb": "^1.1.5"
   },
   "dependencies": {
     "cors": "^2.8.5",

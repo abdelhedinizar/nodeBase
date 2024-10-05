@@ -42,6 +42,31 @@ const DishSchema = new mangoose.Schema(
       type: Date,
       default: Date.now(),
     },
+    Accompaniments: [
+      {
+        name : {
+          type: String,
+          required: [true, 'An accompaniment must have a name'],
+        },
+        price : {
+          type: Number,
+          required: [true, 'An Accompaniment must have a price']
+      },
+      inputType : {
+        type: String,
+        enum: ['radio', 'checkbox'],
+        default: 'radio'
+      },
+      AccompanimentsTitle : {
+        type: String,
+        default: 'Accompaniment of your choice'
+      },
+      AccompanimentsDescription : {
+        type: String,
+        default: 'Choose what you want'
+    }
+  }
+    ]
   },
   {
     toJSON: { virtuals: true },

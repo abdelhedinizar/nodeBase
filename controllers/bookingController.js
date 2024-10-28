@@ -3,20 +3,21 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.getCheckoutSeesion = async (req, res, next) => {
   const order = await Order.findById(req.params.orderID);
+  let line_items = order.dishes.map((dish) => {
+    return {
+      price_data: {
+        currency: 'eur',
+        product_data: {
+          name: dish.dish.name,
+        },
+        unit_amount: dish.dish.price * 100,
+      },
+      quantity: dish.quantity ? dish.quantity : 1,
+    };
+  });
 
   const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price_data: {
-          currency: 'eur',
-          product_data: {
-            name: `Order ${order._id}`,
-          },
-          unit_amount: order.totalPrice * 100,
-        },
-        quantity: 1,
-      },
-    ],
+    line_items,
     mode: 'payment',
     success_url: `${req.protocol}://${req.get('host')}/`,
     cancel_url: `${req.protocol}://${req.get('host')}/order/${order._id}`,

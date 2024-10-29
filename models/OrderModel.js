@@ -24,6 +24,22 @@ const OrderSchema = new mongoose.Schema(
         price: {
           type: Number,
         },
+        addedAccompaniments: [
+          {
+            accompaniment: {
+              type: mongoose.Schema.ObjectId,
+              ref: 'Accompaniment',
+            },
+            quantity: {
+              type: Number,
+              required: [true, 'Each accompaniment must have a quantity'],
+              min: [1, 'Quantity must be at least 1'],
+            },
+            price: {
+              type: Number,
+            },
+          },
+        ],
       },
     ],
     totalPrice: {
@@ -82,11 +98,16 @@ OrderSchema.pre('save', async function (next) {
     });
     this.dishes.forEach((dish) => {
       dish.price = dish.dish.price * dish.quantity;
+      if (dish.addedAccompaniments) {
+        dish.price += dish.addedAccompaniments.reduce((acc, ac) => {
+          return acc + ac.price * ac.quantity;
+        }, 0);
+      }
     });
-    this.totalPrice = this.dishes.reduce((acc, item) => {
-      return acc + item.dish.price * item.quantity;
-    }, 0);
 
+    this.totalPrice = this.dishes.reduce((acc, item) => {
+      return acc + item.price;
+    }, 0);
     next();
   } catch (err) {
     next(err);

@@ -52,6 +52,8 @@ const OrderSchema = new mongoose.Schema(
         message: 'Total price must be greater than 0',
       },
     },
+    sessionId: String,
+    sequenceNumber: { type: Number },
     status: {
       type: String,
       enum: ['pending', 'inProgress', 'completed', 'cancelled'],
@@ -67,7 +69,7 @@ const OrderSchema = new mongoose.Schema(
       enum: ['card', 'cash', 'paypal'],
       required: [true, 'Payment method is required'],
     },
-    orderDate: {
+    createdAt: {
       type: Date,
       default: Date.now,
     },

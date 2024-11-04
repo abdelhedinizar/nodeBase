@@ -24,6 +24,7 @@ const getAllOrders = async (req, res) => {
 };
 const createOrder = async (req, res) => {
   try {
+    req.body.sequenceNumber = await setSequenceNumber();
     const newOrder = await Order.create(req.body);
     res.status(201).json({
       status: 'success',
@@ -37,7 +38,20 @@ const createOrder = async (req, res) => {
   }
 };
 
+async function setSequenceNumber() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const lastOrder = await Order.findOne({ createdAt: { $gte: today } }).sort({
+    createdAt: -1,
+  });
+  let sequenceNumber = 100;
+  if (lastOrder) {
+    sequenceNumber = lastOrder.sequenceNumber + 1;
+  }
+  return sequenceNumber;
+}
+
 module.exports = {
   getAllOrders,
-  createOrder
+  createOrder,
 };

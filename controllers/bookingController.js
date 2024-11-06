@@ -46,7 +46,7 @@ handleCheckoutSessionCompleted = async (session) => {
 
 exports.webhookCheckout = async (req, res, next) => {
   const signature = req.headers['stripe-signature'];
-  let event;
+  let event = req.body;
 
   try {
     event = stripe.webhooks.constructEvent(req.body, signature, endpointSecret);

@@ -46,7 +46,11 @@ async function setSequenceNumber() {
   });
   let sequenceNumber = 100;
   if (lastOrder) {
-    sequenceNumber = lastOrder.sequenceNumber + 1;
+    if (lastOrder.sequenceNumber) {
+      sequenceNumber = lastOrder.sequenceNumber + 1;
+    } else {
+      sequenceNumber = 100;
+    }
   }
   return sequenceNumber;
 }

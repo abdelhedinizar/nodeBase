@@ -4,7 +4,11 @@ const bookingController = require('../controllers/bookingController');
 const route = express.Router();
 const bodyParser = require('body-parser');
 
-route.get('/checkout-seesion/:orderID', bookingController.getCheckoutSeesion);
+route.get(
+  '/checkout-seesion/:orderID',
+  express.json(),
+  bookingController.getCheckoutSeesion
+);
 route.post(
   '/webhook',
   bodyParser.raw({ type: 'application/json' }),

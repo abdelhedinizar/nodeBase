@@ -41,28 +41,30 @@ handleCheckoutSessionCompleted = async (session) => {
     order.status = 'inProgress';
     await order.save();
   }
-  res.sendStatus(200);
 };
 
-exports.webhookCheckout = async (req, res, next) => {
+exports.webhookCheckout = async (req, res) => {
   const signature = req.headers['stripe-signature'];
   let event = req.body;
 
   try {
+    // Verify the event by passing raw body and signature
     event = stripe.webhooks.constructEvent(req.body, signature, endpointSecret);
   } catch (err) {
     console.error('⚠️  Webhook signature verification failed.', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
   switch (event.type) {
     case 'checkout.session.completed':
-      const session = event.data.object;
+      const session = event.data.object; // Access the session object directly
       await handleCheckoutSessionCompleted(session);
+      break;
+    case 'payment_method.attached':
+      const paymentMethod = event.data.object;
+      console.log('PaymentMethod was attached to a Customer!');
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
-
-  res.status(200).json({ received: true });
+  res.json({ received: true });
 };

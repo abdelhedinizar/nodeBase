@@ -24,7 +24,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(morgan('dev'));
-app.use(express.json());
 
 app.get('/', (req, res) => {
   res.status(200).send('Welcome to Node Base');
@@ -36,10 +35,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/v1/users', userRouter);
-app.use('/api/v1/dishs', dishRouter);
-app.use('/api/v1/categories', categoryRouter);
-app.use('/api/v1/orders', orderRouter);
+app.use('/api/v1/users', express.json(), userRouter);
+app.use('/api/v1/dishs', express.json(), dishRouter);
+app.use('/api/v1/categories', express.json(), categoryRouter);
+app.use('/api/v1/orders', express.json(), orderRouter);
 app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res) => {

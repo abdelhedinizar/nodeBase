@@ -37,7 +37,6 @@ const createOrder = async (req, res) => {
     });
   }
 };
-
 async function setSequenceNumber() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -54,8 +53,24 @@ async function setSequenceNumber() {
   }
   return sequenceNumber;
 }
+const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    res.status(200).json({
+      status: 'success',
+      length: order ? 1 : 0,
+      data: { order },
+    });
+  } catch (e) {
+    res.status(400).json({
+      status: 'error',
+      message: e,
+    });
+  }
+};
 
 module.exports = {
   getAllOrders,
   createOrder,
+  getOrderById,
 };

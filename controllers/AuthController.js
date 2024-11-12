@@ -49,8 +49,8 @@ exports.signin = async (req, res, next) => {
       });
     }
     const user = await User.findOne({ email: email }).select('+password');
-    const correct = user?.password
-      ? user.correctPassword(password, user.password)
+    let correct = (user?.password)
+      ? await user.correctPassword(password, user.password)
       : false;
     if (!user || !correct) {
       return res.status(401).json({

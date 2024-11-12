@@ -12,6 +12,7 @@ const route = express.Router();
 
 route.post('/signup', authController.signup);
 route.post('/signin', authController.signin);
+route.route('/me').get(authController.protect, authController.getMe);
 
 route.param('id', (req, res, next, val) => {
   console.log(`User id is ${val}`);

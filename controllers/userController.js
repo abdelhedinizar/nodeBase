@@ -1,3 +1,5 @@
+const User = require('./../models/UserModel');
+
 const getAllUsers = (req, res) => {
   res.status(200).send('Hello Elliot et Khaled :D !');
 };
@@ -17,6 +19,17 @@ const updateUser = (req, res) => {
 
 const deleteUser = (req, res) => {
   res.status(204).send('User deleted');
+};
+
+const getUserByEmail = (req, res) => {
+  if(!req.email){
+    res.status(400).send('Please provide an email');
+  }
+  const user = User.findOne({ email: req.email });
+  if(!user){
+    res.status(404).send('User not found');
+  }
+  res.status(200).send(user);
 };
 
 module.exports =  { getAllUsers, getUserById, createUser, updateUser, deleteUser };

@@ -50,6 +50,19 @@ const UserSchema = new mangoose.Schema({
     type: String,
     default: 'Default.jpg',
   },
+  socialMedia: [
+    {
+      id: {
+        type: String,
+      },
+      accessToken: {
+        type: String,
+      },
+      graphDomain: {
+        type: String,
+      },
+    },
+  ],
 });
 UserSchema.pre('save', function (next) {
   if (this.password && this.role === 'UserWithoutAccount') {

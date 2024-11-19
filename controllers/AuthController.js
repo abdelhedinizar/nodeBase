@@ -122,3 +122,59 @@ exports.getMe = async (req, res) => {
     });
   }
 };
+
+exports.signinWithSocialMedia = async (req, res) => {
+  let user = req.body;
+  // check if the user already exists
+  const existingUser = await User.findOne({ email: user.email });
+  if (existingUser) {
+    // update the user with the new social media info
+    const existingIndex = existingUser.socialMedia.findIndex(
+      (sm) => sm.id === user.id && sm.graphDomain === user.graphDomain
+    );
+    if (existingIndex !== -1) {
+      // Update the existing social media element
+      existingUser.socialMedia[existingIndex] = {
+        id: user.id,
+        accessToken: user.accessToken,
+        graphDomain: user.graphDomain,
+      };
+    } else {
+      // Add the new social media element
+      existingUser.socialMedia = [
+        ...existingUser.socialMedia,
+        {
+          id: user.id,
+          accessToken: user.accessToken,
+          graphDomain: user.graphDomain,
+        },
+      ];
+    }
+    existingUser.photo = await user.picture.data.url;
+    await existingUser.save();
+    const token = signToken(existingUser._id);
+    return res.status(200).json({
+      status: 'success',
+      token,
+    });
+    // create a new user if the user doesn't exist
+    // create a new user with the social media info
+  } else {
+    user = await User.create({
+      name: user.name,
+      email: user.email,
+      socialMedia: [
+        {
+          id: user.id,
+          accessToken: user.accessToken,
+          graphDomain: user.graphDomain,
+        },
+      ],
+    });
+    const token = await signToken(user._id);
+    return res.status(201).json({
+      status: 'success',
+      token,
+    });
+  }
+};

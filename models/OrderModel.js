@@ -84,7 +84,7 @@ const OrderSchema = new mongoose.Schema(
 OrderSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'dishes.dish',
-    select: 'name price',
+    select: 'name price image',
   }).populate({
     path: 'user',
     select: 'name email role',

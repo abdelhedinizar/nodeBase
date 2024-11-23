@@ -7,6 +7,7 @@ const dishRouter = require('./routes/dishRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const orderRouter = require('./routes/orderRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const assistanceRouter = require('./routes/assistanceRoutes');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/v1/dishs', express.json(), dishRouter);
 app.use('/api/v1/categories', express.json(), categoryRouter);
 app.use('/api/v1/orders', express.json(), orderRouter);
 app.use('/api/v1/bookings', bookingRouter);
+app.use('/api/v1/assistances', express.json(), assistanceRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({

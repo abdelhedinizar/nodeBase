@@ -163,6 +163,7 @@ exports.signinWithSocialMedia = async (req, res) => {
     user = await User.create({
       name: user.name,
       email: user.email,
+      role: 'User',
       socialMedia: [
         {
           id: user.id,

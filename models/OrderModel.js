@@ -56,7 +56,14 @@ const OrderSchema = new mongoose.Schema(
     sequenceNumber: { type: Number },
     status: {
       type: String,
-      enum: ['pending', 'inProgress', 'completed', 'cancelled'],
+      enum: [
+        'pending',
+        'inProgress',
+        'Processing',
+        'Dispatched',
+        'completed',
+        'cancelled',
+      ],
       default: 'pending',
     },
     paymentStatus: {

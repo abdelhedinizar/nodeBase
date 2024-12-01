@@ -35,7 +35,7 @@ const UserSchema = new mangoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'Responsable', 'User', 'UserWithoutAccount'],
+    enum: ['admin', 'Staff', 'User', 'UserWithoutAccount'],
     default: 'UserWithoutAccount',
   },
   hasUserHasAccount: {

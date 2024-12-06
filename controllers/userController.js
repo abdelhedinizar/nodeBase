@@ -27,8 +27,15 @@ const getUserById = (req, res) => {
   res.status(200).send(`User with id ${req.params.id}`);
 };
 
-const createUser = (req, res) => {
-  console.log(req.body);
+const createUser = async (req, res) => {
+  reqUser = {
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password ? req.body.password : '',
+    confirmPassword: req.body.confirmPassword ? req.body.confirmPassword : '',
+    role: 'Staff',
+  };
+  const newUser = await User.create(reqUser);
   res.status(201).send('User created');
 };
 const updateUser = (req, res) => {

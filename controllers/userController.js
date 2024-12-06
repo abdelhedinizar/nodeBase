@@ -28,15 +28,27 @@ const getUserById = (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  reqUser = {
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password ? req.body.password : '',
-    confirmPassword: req.body.confirmPassword ? req.body.confirmPassword : '',
-    role: 'Staff',
-  };
-  const newUser = await User.create(reqUser);
-  res.status(201).send('User created');
+  try {
+    reqUser = {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password ? req.body.password : '',
+      confirmPassword: req.body.confirmPassword ? req.body.confirmPassword : '',
+      role: req.body.role ? req.body.role : 'User',
+    };
+    const newUser = await User.create(reqUser);
+    res.status(201).json({
+      status: 'success',
+      data: {
+        user: newUser,
+      },
+    });
+  } catch (e) {
+    res.status(400).json({
+      status: 'fail',
+      message: e,
+    });
+  }
 };
 const updateUser = (req, res) => {
   console.log(req.body);

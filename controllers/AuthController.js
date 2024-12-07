@@ -1,5 +1,7 @@
 const User = require('./../models/UserModel');
 const jwt = require('jsonwebtoken');
+const sendEmail = require('./../utils/email');
+const crypto = require('crypto');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -178,4 +180,69 @@ exports.signinWithSocialMedia = async (req, res) => {
       token,
     });
   }
+};
+
+exports.askResetPassword = async function (req, res) {
+  try {
+    // Step 1: Get user by email
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'User not found',
+      });
+    }
+    // Step 2: Generate random password and hash it
+    const resetToken = await user.createPasswordResetToken();
+    const resetURL = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/users/resetPassword/${resetToken}`;
+    const message = `You are receiving this email because you (or someone else) have requested a password reset for your account.\n\nPlease click on the following link to reset your password:\n\n${resetURL}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`;
+
+    await sendEmail({
+      email: user.email,
+      subject: 'Password reset valid for 10 minutes',
+      message,
+    });
+    res.status(200).json({
+      status: 'success',
+      message: 'Reset password email sent',
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return res.status(500).json({
+      status: 'fail',
+      message: err.message,
+    });
+  }
+};
+
+exports.resetPassword = async function (req, res) {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Token is invalid or expired',
+    });
+  }
+  user.password = req.body.password;
+  user.confirmPassword = req.body.confirmPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+  const token = signToken(user._id);
+  return res.status(200).json({
+    status: 'success',
+    token,
+  });
 };

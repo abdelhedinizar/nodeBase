@@ -2,6 +2,7 @@ const { default: mongoose } = require('mongoose');
 const mangoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const UserSchema = new mangoose.Schema({
   name: {
@@ -33,6 +34,8 @@ const UserSchema = new mangoose.Schema({
     },
     message: 'Passwords are not the same',
   },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   role: {
     type: String,
     enum: ['admin', 'Staff', 'User', 'UserWithoutAccount'],
@@ -84,6 +87,17 @@ UserSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+UserSchema.methods.createPasswordResetToken = async function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  await this.save({ validateBeforeSave: false });
+  return resetToken;
 };
 
 const User = mongoose.model('User', UserSchema);

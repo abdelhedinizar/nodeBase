@@ -37,6 +37,27 @@ const createOrder = async (req, res) => {
     });
   }
 };
+
+const updateOrder = async (req, res) => {
+  try {
+    const order = await Order.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        order,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};
+
 async function setSequenceNumber() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -73,4 +94,5 @@ module.exports = {
   getAllOrders,
   createOrder,
   getOrderById,
+  updateOrder,
 };

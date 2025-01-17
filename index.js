@@ -12,14 +12,7 @@ const assistanceRouter = require('./routes/assistanceRoutes');
 const app = express();
 
 const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'http://nozworld.zapto.org:3000',
-    'http://192.168.1.152:3000',
-    'http://localhost:5000',
-    'http://nozworld.zapto.org:5000',
-    'http://192.168.1.152:5000',
-  ], // Allow only this origin
+  origin: '*', // Allow only this origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow these HTTP methods
   credentials: true, // Allow cookies to be sent
   optionsSuccessStatus: 204, // Some legacy browsers choke on 204

@@ -7,7 +7,14 @@ const crypto = require('crypto');
 const UserSchema = new mangoose.Schema({
   name: {
     type: String,
-    required: [true, 'A user must have a Name'],
+  },
+  firstname: {
+    type: String,
+    required: [true, 'A user must have a firstname'],
+  },
+  lastname: {
+    type: String,
+    required: [true, 'A user must have a lastname'],
   },
   email: {
     type: String,
@@ -68,6 +75,7 @@ const UserSchema = new mangoose.Schema({
   ],
 });
 UserSchema.pre('save', function (next) {
+  this.name = this.firstname + ' ' + this.lastname;
   if (this.password && this.role === 'UserWithoutAccount') {
     this.role = 'User';
     this.hasUserHasAccount = true;

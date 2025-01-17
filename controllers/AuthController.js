@@ -13,7 +13,8 @@ exports.signup = async (req, res, next) => {
   try {
     reqUser = req.body.password
       ? {
-          name: req.body.name,
+          firstname: req.body.firstname,
+          lastname: req.body.lastname,
           email: req.body.email,
           password: req.body.password ? req.body.password : '',
           confirmPassword: req.body.confirmPassword

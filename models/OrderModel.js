@@ -40,6 +40,23 @@ const OrderSchema = new mongoose.Schema(
             },
           },
         ],
+        size: [
+          {
+            name: {
+              type: String,
+              required: [true, 'A size must have a name'],
+            },
+            price: {
+              type: Number,
+              required: [true, 'A size must have a price'],
+            },
+            inputType: {
+              type: String,
+              enum: ['radio', 'checkbox'],
+              default: 'radio',
+            },
+          },
+        ],
       },
     ],
     totalPrice: {
@@ -106,12 +123,13 @@ OrderSchema.pre('save', async function (next) {
       select: 'price', // Select only the price field
     });
     this.dishes.forEach((dish) => {
-      dish.price = dish.dish.price * dish.quantity;
-      if (dish.addedAccompaniments) {
-        dish.price += dish.addedAccompaniments.reduce((acc, ac) => {
-          return acc + ac.price * ac.quantity;
-        }, 0);
-      }
+      const accompanimentsPrice = dish.addedAccompaniments.reduce((acc, ac) => {
+        return acc + ac.price * ac.quantity;
+      }, 0);
+      dish.price =
+        ((dish.size ? dish.dish.price + dish.size?.price : dish.dish.price) +
+          accompanimentsPrice) *
+        dish.quantity;
     });
 
     this.totalPrice = this.dishes.reduce((acc, item) => {

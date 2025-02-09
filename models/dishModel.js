@@ -74,6 +74,23 @@ const DishSchema = new mangoose.Schema(
         },
       },
     ],
+    size: [
+      {
+        name: {
+          type: String,
+          required: [true, 'A size must have a name'],
+        },
+        price: {
+          type: Number,
+          required: [true, 'A size must have a price'],
+        },
+        inputType: {
+          type: String,
+          enum: ['radio', 'checkbox'],
+          default: 'radio',
+        },
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },

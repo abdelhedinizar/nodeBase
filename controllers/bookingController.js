@@ -1,3 +1,4 @@
+const User = require('../models/UserModel');
 const Order = require('./../models/OrderModel');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -36,6 +37,18 @@ exports.getCheckoutSeesion = async (req, res, next) => {
 };
 handleCheckoutSessionCompleted = async (session) => {
   const order = await Order.findOne({ sessionId: session.id });
+  const user = await User.findById(order.user._id);
+  if (user && (user.address.line1 === undefined || user.address.line1 === '')) {
+    let address = session.customer_details.address;
+    user.address = {
+      line1: address.line1,
+      line2: address.line2,
+      city: address.city,
+      state: address.state,
+      country: address.country,
+    };
+    await user.save();
+  }
   if (order) {
     order.paymentStatus = 'paid';
     order.status = 'inProgress';

@@ -60,6 +60,23 @@ const UserSchema = new mangoose.Schema({
     type: String,
     default: 'Default.jpg',
   },
+  address: {
+    line1: {
+      type: String,
+    },
+    line2: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+  },
   socialMedia: [
     {
       id: {

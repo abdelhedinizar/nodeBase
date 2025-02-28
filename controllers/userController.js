@@ -51,9 +51,51 @@ const createUser = async (req, res) => {
     });
   }
 };
-const updateUser = (req, res) => {
-  console.log(req.body);
-  res.status(200).send('User updated');
+const updateUser = async (req, res) => {
+  try {
+    const updateFields = {};
+    if (req.body.role) updateFields.role = req.body.role;
+    if (req.body.photo) updateFields.photo = req.body.photo;
+    if (req.body.address) updateFields.address = req.body.address;
+    if (req.body.phoneNumber) updateFields.phoneNumber = req.body.phoneNumber;
+
+    const user = await User.findByIdAndUpdate(req.params.id, updateFields, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user,
+      },
+    });
+  } catch (e) {
+    res.status(400).json({
+      status: 'fail',
+      message: e,
+    });
+  }
+};
+
+const updateDish = async (req, res) => {
+  try {
+    const dish = await Dish.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        dish,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
 const deleteUser = (req, res) => {

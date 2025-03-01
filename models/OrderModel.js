@@ -30,6 +30,10 @@ const OrderSchema = new mongoose.Schema(
               type: mongoose.Schema.ObjectId,
               ref: 'Accompaniment',
             },
+            name: {
+              type: String,
+              required: [true, 'A size must have a name'],
+            },
             quantity: {
               type: Number,
               required: [true, 'Each accompaniment must have a quantity'],
@@ -93,6 +97,9 @@ const OrderSchema = new mongoose.Schema(
       enum: ['card', 'cash', 'paypal'],
       required: [true, 'Payment method is required'],
     },
+    cardLast4: {
+      type: String,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
@@ -111,7 +118,7 @@ OrderSchema.pre(/^find/, function (next) {
     select: 'name price image',
   }).populate({
     path: 'user',
-    select: 'name email role',
+    select: 'name email role address',
   });
   next();
 });

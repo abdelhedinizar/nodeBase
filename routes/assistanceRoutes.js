@@ -27,7 +27,7 @@ route.route('/').post(async (req, res) => {
 const startChatWithBot = async (dishes, req) => {
   const apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   const headers = {
-    Authorization: `Bearer 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`, // Use environment variable for API key
+    Authorization: `Bearer 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`, // Use environment variable for API key
     'Content-Type': 'application/json',
   };
   const systemMessage1 = {
@@ -43,7 +43,7 @@ const startChatWithBot = async (dishes, req) => {
   req.body.messages.unshift(systemMessage);
   req.body.messages.unshift(systemMessage1);
   const payload = {
-    model: 'openai/gpt-3.5-turbo', // You can change this to any model supported by OpenRouter
+    model: 'deepseek/deepseek-chat:free',
     messages: req.body.messages,
     temperature: 0.7,
     stream: false,

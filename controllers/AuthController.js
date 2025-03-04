@@ -126,6 +126,49 @@ exports.getMe = async (req, res) => {
   }
 };
 
+exports.updateMe = async (req, res) => {
+  try {
+    const { firstname,lastname, phoneNumber, address } = req.body;
+
+    // Find the authenticated user
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'User not found',
+      });
+    }
+
+    if (firstname) user.firstname = firstname;
+    if (lastname) user.lastname = lastname;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+
+    if (address) {
+      if (address.line1) user.address.line1 = address.line1;
+      if (address.line2) user.address.line2 = address.line2;
+      if (address.city) user.address.city = address.city;
+      if (address.state) user.address.state = address.state;
+      if (address.country) user.address.country = address.country;
+    }
+
+    await user.save();
+    const updatedUser = await User.findById(req.user._id).select('-password');
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user: updatedUser,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: error.message,
+    });
+  }
+};
+
 exports.signinWithSocialMedia = async (req, res) => {
   let user = req.body;
   // check if the user already exists

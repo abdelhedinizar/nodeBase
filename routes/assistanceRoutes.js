@@ -7,8 +7,12 @@ route.route('/').post(async (req, res) => {
   const dishs = await Dish.find({}, 'name ingredients category price -_id');
   const summarizedDishes = dishs
     .map(
-      (index, dish) =>
-        `${index + 1}) the dish name is ${dish.name}, this is the dish ingredients ${dish.ingredients} (category : ${dish.category}, price : ${dish.price}£)`
+      (dish, index) =>
+        `${index + 1}) the dish name is ${
+          dish.name
+        }, this is the dish ingredients ${dish.ingredients} (category : ${
+          dish.category
+        }, price : ${dish.price}£)`
     )
     .join('\n');
 
@@ -21,9 +25,9 @@ route.route('/').post(async (req, res) => {
 });
 
 const startChatWithBot = async (dishes, req) => {
-  const apiUrl = 'https://proxy.tune.app/chat/completions';
+  const apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   const headers = {
-    Authorization: 'Bearer sk-tune-3qpKz1UQ45jGPN2Jed8z8Yj6GfDOEZ2YA7f',
+    Authorization: `Bearer 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`, // Use environment variable for API key
     'Content-Type': 'application/json',
   };
   const systemMessage1 = {
@@ -39,7 +43,7 @@ const startChatWithBot = async (dishes, req) => {
   req.body.messages.unshift(systemMessage);
   req.body.messages.unshift(systemMessage1);
   const payload = {
-    model: 'meta/llama-3.2-90b-vision',
+    model: 'openai/gpt-3.5-turbo', // You can change this to any model supported by OpenRouter
     messages: req.body.messages,
     temperature: 0.7,
     stream: false,

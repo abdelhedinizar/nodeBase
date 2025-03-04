@@ -5,7 +5,6 @@ const {
   getUserById,
   updateUser,
   deleteUser,
-
 } = require('../controllers/userController');
 const authController = require('../controllers/AuthController');
 
@@ -13,7 +12,10 @@ const route = express.Router();
 
 route.post('/signup', authController.signup);
 route.post('/signin', authController.signin);
-route.route('/me').get(authController.protect, authController.getMe);
+route
+  .route('/me')
+  .get(authController.protect, authController.getMe)
+  .patch(authController.protect, authController.updateMe);
 route
   .route('/signinWithSocialMedia')
   .post(authController.signinWithSocialMedia);

@@ -27,7 +27,7 @@ route.route('/').post(async (req, res) => {
 const startChatWithBot = async (dishes, req) => {
   const apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   const headers = {
-    Authorization: `Bearer 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`, // Use environment variable for API key
+    Authorization: `Bearer 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`, 
     'Content-Type': 'application/json',
   };
   const systemMessage1 = {

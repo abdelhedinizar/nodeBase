@@ -27,12 +27,16 @@ route.route('/').post(async (req, res) => {
 const startChatWithBot = async (dishes, req) => {
   const apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   const headers = {
-    Authorization: `Bearer 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`, 
+    Authorization: `Bearer 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`,
     'Content-Type': 'application/json',
   };
   const systemMessage1 = {
     role: 'system',
     content: `You are a bot in an application for consulting the menu of the restaurant and making orders, so your job is to respond to any question about the restaurant and the dishes, please respect this menu `,
+  };
+  const systemMessage2 = {
+    role: 'system',
+    content: `When you start a dissussion with the user, you should always start by welcoming the user and asking him if he needs help, and then you can ask him about his order or any other question he wants to ask`,
   };
   const systemMessage = {
     role: 'system',
@@ -42,6 +46,7 @@ const startChatWithBot = async (dishes, req) => {
   };
   req.body.messages.unshift(systemMessage);
   req.body.messages.unshift(systemMessage1);
+  req.body.messages.unshift(systemMessage2);
   const payload = {
     model: 'deepseek/deepseek-chat:free',
     messages: req.body.messages,

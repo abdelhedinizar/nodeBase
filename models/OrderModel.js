@@ -150,7 +150,7 @@ OrderSchema.pre('save', async function (next) {
 });
 
 // Pre-save middleware to update completedAt if status changes to completed
-orderSchema.pre('save', function (next) {
+OrderSchema.pre('save', function (next) {
   if (this.isModified('status') && this.status === 'completed') {
     this.completedAt = Date.now();
   }

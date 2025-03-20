@@ -104,6 +104,7 @@ const OrderSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    completedAt: Date,
     deliveryDate: Date,
   },
   {
@@ -146,6 +147,14 @@ OrderSchema.pre('save', async function (next) {
   } catch (err) {
     next(err);
   }
+});
+
+// Pre-save middleware to update completedAt if status changes to completed
+orderSchema.pre('save', function (next) {
+  if (this.isModified('status') && this.status === 'completed') {
+    this.completedAt = Date.now();
+  }
+  next();
 });
 
 const Order = mongoose.model('Orders', OrderSchema);

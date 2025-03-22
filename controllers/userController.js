@@ -23,8 +23,20 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const getUserById = (req, res) => {
-  res.status(200).send(`User with id ${req.params.id}`);
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.status(200).json({
+      status: 'success',
+      length: user ? 1 : 0,
+      data: { user },
+    });
+  } catch (e) {
+    res.status(400).json({
+      status: 'error',
+      message: e,
+    });
+  }
 };
 
 const createUser = async (req, res) => {

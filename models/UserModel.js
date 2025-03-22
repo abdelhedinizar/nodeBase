@@ -80,11 +80,9 @@ const UserSchema = new mangoose.Schema({
   phoneNumber: {
     dialCode: {
       type: String,
-      required: true,
     },
     number: {
       type: String,
-      required: true,
     },
   },
   socialMedia: [

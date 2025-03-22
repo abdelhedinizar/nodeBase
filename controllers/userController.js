@@ -36,6 +36,8 @@ const createUser = async (req, res) => {
       password: req.body.password ? req.body.password : '',
       confirmPassword: req.body.confirmPassword ? req.body.confirmPassword : '',
       role: req.body.role ? req.body.role : 'User',
+      address: req.body.address ? req.body.address : {},
+      phoneNumber: req.body.phoneNumber ? req.body.phoneNumber : undefined,
     };
     const newUser = await User.create(reqUser);
     res.status(201).json({

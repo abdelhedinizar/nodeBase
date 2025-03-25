@@ -3,7 +3,10 @@ const APIFeatures = require('./../utils/APIFeatures');
 
 const getAllUsers = async (req, res) => {
   try {
-    const features = new APIFeatures(User.find(), req.query)
+    const features = new APIFeatures(
+      User.find().where({ isDeleted: { $ne: true } }),
+      req.query
+    )
       .filter()
       .sort()
       .limitFields()
@@ -92,28 +95,47 @@ const updateUser = async (req, res) => {
   }
 };
 
-const updateDish = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
-    const dish = await Dish.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    res.status(200).json({
-      status: 'success',
-      data: {
-        dish,
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        isDeleted: true,
       },
+      {
+        new: true,
+        runValidators: false,
+      }
+    );
+    res.status(204).json({
+      status: 'success',
+      message: 'User deleted successfully',
     });
   } catch (err) {
-    res.status(400).json({
+    res.status(404).json({
       status: 'fail',
       message: err,
     });
   }
 };
 
-const deleteUser = (req, res) => {
-  res.status(204).send('User deleted');
+const deleteUsers = async (req, res) => {
+  try {
+    const ids = req.body.ids;
+    const users = await User.updateMany(
+      { _id: { $in: ids } },
+      { isDeleted: true }
+    );
+    res.status(204).json({
+      status: 'success',
+      message: 'Users deleted successfully',
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
 const getUserByEmail = (req, res) => {
@@ -133,4 +155,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  deleteUsers,
 };

@@ -5,6 +5,7 @@ const {
   getUserById,
   updateUser,
   deleteUser,
+  deleteUsers,
 } = require('../controllers/userController');
 const authController = require('../controllers/AuthController');
 
@@ -27,7 +28,15 @@ route.param('id', (req, res, next, val) => {
   next();
 });
 
-route.route('/').get(getAllUsers).post(authController.protect, createUser);
-route.route('/:id').get(getUserById).patch(updateUser).delete(deleteUser);
+route
+  .route('/')
+  .get(authController.protect, getAllUsers)
+  .post(authController.protect, createUser)
+  .delete(authController.protect, deleteUsers);
+route
+  .route('/:id')
+  .get(authController.protect, getUserById)
+  .patch(authController.protect, updateUser)
+  .delete(authController.protect, deleteUser);
 
 module.exports = route;

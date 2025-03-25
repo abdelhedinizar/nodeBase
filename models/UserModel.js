@@ -98,6 +98,14 @@ const UserSchema = new mangoose.Schema({
       },
     },
   ],
+  active: {
+    type: Boolean,
+    default: true
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
 });
 UserSchema.pre('save', function (next) {
   this.name = this.firstname + ' ' + this.lastname;

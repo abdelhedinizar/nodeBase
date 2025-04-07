@@ -10,7 +10,7 @@ const bookingRouter = require('./routes/bookingRoutes');
 const assistanceRouter = require('./routes/assistanceRoutes');
 
 const app = express();
-
+app.use(express.static('public'));
 const corsOptions = {
   origin: '*', // Allow only this origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow these HTTP methods

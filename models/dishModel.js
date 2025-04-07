@@ -23,6 +23,11 @@ const DishSchema = new mangoose.Schema(
       type: String,
       required: [true, 'A dish must have an image'],
     },
+    status: {
+      type: String,
+      enum: ['published', 'draft'],
+      default: 'Published',
+    },
     price: {
       type: Number,
       required: [true, 'A dish must have a price'],

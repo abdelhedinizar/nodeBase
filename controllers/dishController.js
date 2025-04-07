@@ -1,5 +1,7 @@
 const Dish = require('./../models/dishModel');
 const APIFeatures = require('./../utils/APIFeatures');
+const path = require('path');
+const fs = require('fs');
 
 const getAllDishs = async (req, res) => {
   try {
@@ -41,7 +43,25 @@ const getDishById = async (req, res) => {
 
 const createDish = async (req, res) => {
   try {
-    const newDish = await Dish.create(req.body);
+    let imagePath = null;
+    if (req.body.image) {
+      const base64Data = req.body.image.replace(/^data:image\/\w+;base64,/, '');
+      const buffer = Buffer.from(base64Data, 'base64');
+      const filename = `dish-${Date.now()}.jpg`;
+      const filepath = path.join(
+        __dirname,
+        '../public/uploads/dishes',
+        filename
+      );
+
+      fs.writeFileSync(filepath, buffer);
+      imagePath = `/uploads/dishes/${filename}`;
+    }
+    const dishData = {
+      ...req.body,
+      imagePath,
+    };
+    const newDish = await Dish.create(dishData);
     res.status(201).json({
       status: 'success',
       data: { dish: newDish },

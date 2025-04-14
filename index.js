@@ -33,9 +33,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/v1/users', express.json(), userRouter);
-app.use('/api/v1/dishs', express.json(), dishRouter);
+app.use('/api/v1/dishs', express.json({ limit: '10mb' }), dishRouter);
 app.use('/api/v1/categories', express.json(), categoryRouter);
-app.use('/api/v1/orders', express.json(), orderRouter);
+app.use('/api/v1/orders', express.json({ limit: '10mb' }), orderRouter);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/assistances', express.json(), assistanceRouter);
 

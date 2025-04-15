@@ -90,9 +90,117 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const getOrderStats = async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+
+    // Total revenue this year
+    const yearlyStats = await Order.aggregate([
+      {
+        $match: {
+          paymentStatus: 'paid',
+          createdAt: {
+            $gte: new Date(`${currentYear}-01-01`),
+            $lte: new Date(`${currentYear}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: '$totalPrice' },
+          totalOrders: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Best 5 selling dishes
+    const topProducts = await Order.aggregate([
+      { $unwind: '$dishes' },
+      {
+        $group: {
+          _id: '$dishes.dish',
+          totalSold: { $sum: '$dishes.quantity' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'dishs', // collection name
+          localField: '_id',
+          foreignField: '_id',
+          as: 'dishDetails',
+        },
+      },
+      { $unwind: '$dishDetails' },
+      {
+        $project: {
+          _id: 0,
+          dishId: '$_id',
+          name: '$dishDetails.name',
+          totalSold: 1,
+        },
+      },
+      { $sort: { totalSold: -1 } },
+      { $limit: 5 },
+    ]);
+
+    // Monthly revenue comparison (this month vs last month)
+    const monthlyRevenue = await Order.aggregate([
+      {
+        $match: {
+          paymentStatus: 'paid',
+          createdAt: {
+            $gte: new Date(`${currentYear}-01-01`),
+            $lte: new Date(`${currentYear}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$createdAt' },
+          totalRevenue: { $sum: '$totalPrice' },
+        },
+      },
+    ]);
+
+    const thisMonthRev =
+      monthlyRevenue.find((m) => m._id === currentMonth)?.totalRevenue || 0;
+    const lastMonthRev =
+      monthlyRevenue.find((m) => m._id === currentMonth - 1)?.totalRevenue || 0;
+
+    const increasePercent =
+      lastMonthRev > 0
+        ? (((thisMonthRev - lastMonthRev) / lastMonthRev) * 100).toFixed(2)
+        : null;
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        yearly: {
+          totalRevenue: yearlyStats[0]?.totalRevenue || 0,
+          totalOrders: yearlyStats[0]?.totalOrders || 0,
+        },
+        monthly: {
+          thisMonth: thisMonthRev,
+          lastMonth: lastMonthRev,
+          increasePercent,
+        },
+        topProducts,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'fail',
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   getAllOrders,
   createOrder,
   getOrderById,
   updateOrder,
+  getOrderStats,
 };

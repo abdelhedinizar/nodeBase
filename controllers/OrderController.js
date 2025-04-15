@@ -92,30 +92,104 @@ const getOrderById = async (req, res) => {
 
 const getOrderStats = async (req, res) => {
   try {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const lastYear = currentYear - 1;
+    const currentMonth = now.getMonth() + 1; // 1-based
+    const lastMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+    const lastMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
-    // Total revenue this year
+    // Helper for year range
+    const yearRange = (year) => ({
+      $gte: new Date(`${year}-01-01`),
+      $lte: new Date(`${year}-12-31`),
+    });
+
+    // Helper for month range
+    const monthRange = (y, m) => ({
+      $gte: new Date(`${y}-${String(m).padStart(2, '0')}-01`),
+      $lte: new Date(`${y}-${String(m).padStart(2, '0')}-31`),
+    });
+
+    // === Yearly Revenue ===
     const yearlyStats = await Order.aggregate([
       {
         $match: {
           paymentStatus: 'paid',
-          createdAt: {
-            $gte: new Date(`${currentYear}-01-01`),
-            $lte: new Date(`${currentYear}-12-31`),
-          },
+          createdAt: { $gte: new Date(`${lastYear}-01-01`) }, // include both years
         },
       },
       {
         $group: {
-          _id: null,
+          _id: { $year: '$createdAt' },
           totalRevenue: { $sum: '$totalPrice' },
           totalOrders: { $sum: 1 },
         },
       },
     ]);
 
-    // Best 5 selling dishes
+    const thisYearData = yearlyStats.find((y) => y._id === currentYear) || {};
+    const lastYearData = yearlyStats.find((y) => y._id === lastYear) || {};
+
+    const yearlyRevenue = thisYearData.totalRevenue || 0;
+    const lastYearRevenue = lastYearData.totalRevenue || 0;
+    const yearlyOrders = thisYearData.totalOrders || 0;
+    const yearlyIncrease =
+      lastYearRevenue > 0
+        ? (((yearlyRevenue - lastYearRevenue) / lastYearRevenue) * 100).toFixed(
+            2
+          )
+        : yearlyRevenue > 0
+        ? '100.00'
+        : '0.00';
+
+    // === Monthly Revenue ===
+    const monthlyStats = await Order.aggregate([
+      {
+        $match: {
+          paymentStatus: 'paid',
+          createdAt: {
+            $gte: new Date(
+              `${lastMonthYear}-${String(lastMonth).padStart(2, '0')}-01`
+            ),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$createdAt' },
+            month: { $month: '$createdAt' },
+          },
+          totalRevenue: { $sum: '$totalPrice' },
+          totalOrders: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const thisMonthData =
+      monthlyStats.find(
+        (m) => m._id.year === currentYear && m._id.month === currentMonth
+      ) || {};
+    const lastMonthData =
+      monthlyStats.find(
+        (m) => m._id.year === lastMonthYear && m._id.month === lastMonth
+      ) || {};
+
+    const thisMonthRevenue = thisMonthData.totalRevenue || 0;
+    const lastMonthRevenue = lastMonthData.totalRevenue || 0;
+    const monthlyOrders = thisMonthData.totalOrders || 0;
+    const monthlyIncrease =
+      lastMonthRevenue > 0
+        ? (
+            ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) *
+            100
+          ).toFixed(2)
+        : thisMonthRevenue > 0
+        ? '100.00'
+        : '0.00';
+
+    // === Top Products (same as before) ===
     const topProducts = await Order.aggregate([
       { $unwind: '$dishes' },
       {
@@ -126,7 +200,7 @@ const getOrderStats = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'dishs', // collection name
+          from: 'dishs', // note: collection name (double check spelling!)
           localField: '_id',
           foreignField: '_id',
           as: 'dishDetails',
@@ -145,46 +219,20 @@ const getOrderStats = async (req, res) => {
       { $limit: 5 },
     ]);
 
-    // Monthly revenue comparison (this month vs last month)
-    const monthlyRevenue = await Order.aggregate([
-      {
-        $match: {
-          paymentStatus: 'paid',
-          createdAt: {
-            $gte: new Date(`${currentYear}-01-01`),
-            $lte: new Date(`${currentYear}-12-31`),
-          },
-        },
-      },
-      {
-        $group: {
-          _id: { $month: '$createdAt' },
-          totalRevenue: { $sum: '$totalPrice' },
-        },
-      },
-    ]);
-
-    const thisMonthRev =
-      monthlyRevenue.find((m) => m._id === currentMonth)?.totalRevenue || 0;
-    const lastMonthRev =
-      monthlyRevenue.find((m) => m._id === currentMonth - 1)?.totalRevenue || 0;
-
-    const increasePercent =
-      lastMonthRev > 0
-        ? (((thisMonthRev - lastMonthRev) / lastMonthRev) * 100).toFixed(2)
-        : null;
-
     res.status(200).json({
       status: 'success',
       data: {
         yearly: {
-          totalRevenue: yearlyStats[0]?.totalRevenue || 0,
-          totalOrders: yearlyStats[0]?.totalOrders || 0,
+          totalRevenue: yearlyRevenue,
+          lastYearRevenue,
+          totalOrders: yearlyOrders,
+          increasePercent: yearlyIncrease,
         },
         monthly: {
-          thisMonth: thisMonthRev,
-          lastMonth: lastMonthRev,
-          increasePercent,
+          thisMonth: thisMonthRevenue,
+          lastMonth: lastMonthRevenue,
+          totalOrders: monthlyOrders,
+          increasePercent: monthlyIncrease,
         },
         topProducts,
       },

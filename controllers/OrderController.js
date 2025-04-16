@@ -134,12 +134,19 @@ const getOrderStats = async (req, res) => {
     const yearlyRevenue = thisYearData.totalRevenue || 0;
     const lastYearRevenue = lastYearData.totalRevenue || 0;
     const yearlyOrders = thisYearData.totalOrders || 0;
-    const yearlyIncrease =
+    const lastYearOrders = lastYearData.totalOrders || 0;
+
+    const yearlyIncreaseRevenue =
       lastYearRevenue > 0
-        ? (((yearlyRevenue - lastYearRevenue) / lastYearRevenue) * 100).toFixed(
-            2
-          )
+        ? (((yearlyRevenue - lastYearRevenue) / lastYearRevenue) * 100).toFixed(2)
         : yearlyRevenue > 0
+        ? '100.00'
+        : '0.00';
+
+    const yearlyIncreaseOrders =
+      lastYearOrders > 0
+        ? (((yearlyOrders - lastYearOrders) / lastYearOrders) * 100).toFixed(2)
+        : yearlyOrders > 0
         ? '100.00'
         : '0.00';
 
@@ -179,13 +186,25 @@ const getOrderStats = async (req, res) => {
     const thisMonthRevenue = thisMonthData.totalRevenue || 0;
     const lastMonthRevenue = lastMonthData.totalRevenue || 0;
     const monthlyOrders = thisMonthData.totalOrders || 0;
-    const monthlyIncrease =
+    const lastMonthOrders = lastMonthData.totalOrders || 0;
+
+    const monthlyIncreaseRevenue =
       lastMonthRevenue > 0
         ? (
             ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) *
             100
           ).toFixed(2)
         : thisMonthRevenue > 0
+        ? '100.00'
+        : '0.00';
+      
+    const monthlyIncreaseOrders =
+      lastMonthOrders > 0
+        ? (
+            ((monthlyOrders - lastMonthOrders) / lastMonthOrders) *
+            100
+          ).toFixed(2)
+        : monthlyOrders > 0
         ? '100.00'
         : '0.00';
 
@@ -226,13 +245,17 @@ const getOrderStats = async (req, res) => {
           totalRevenue: yearlyRevenue,
           lastYearRevenue,
           totalOrders: yearlyOrders,
-          increasePercent: yearlyIncrease,
+          lastYearOrders,
+          increasePercentRevenue: yearlyIncreaseRevenue,
+          increasePercentOrders: yearlyIncreaseOrders,
         },
         monthly: {
           thisMonth: thisMonthRevenue,
           lastMonth: lastMonthRevenue,
           totalOrders: monthlyOrders,
-          increasePercent: monthlyIncrease,
+          lastMonthOrders,
+          increasePercentRevenue: monthlyIncreaseRevenue,
+          increasePercentOrders: monthlyIncreaseOrders,
         },
         topProducts,
       },

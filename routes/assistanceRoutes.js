@@ -27,7 +27,7 @@ route.route('/').post(async (req, res) => {
 const startChatWithBot = async (dishes, req) => {
   const apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   const headers = {
-    Authorization: `Bearer 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`,
+    Authorization: `Bearer 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`,
     'Content-Type': 'application/json',
   };
   const systemMessage1 = {
@@ -48,7 +48,7 @@ const startChatWithBot = async (dishes, req) => {
   req.body.messages.unshift(systemMessage1);
   req.body.messages.unshift(systemMessage2);
   const payload = {
-    model: 'deepseek/deepseek-chat:free',
+    model: 'google/gemini-2.0-flash-exp:free',
     messages: req.body.messages,
     temperature: 0.7,
     stream: false,

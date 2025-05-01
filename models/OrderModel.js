@@ -150,12 +150,12 @@ OrderSchema.pre('save', async function (next) {
 });
 
 // Pre-save middleware to update completedAt if status changes to completed
-OrderSchema.pre('save', function (next) {
+/*OrderSchema.pre(/^find/, function (next) {
   if (this.isModified('status') && this.status === 'completed') {
     this.completedAt = Date.now();
   }
   next();
 });
-
+*/
 const Order = mongoose.model('Orders', OrderSchema);
 module.exports = Order;

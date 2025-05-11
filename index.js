@@ -19,7 +19,12 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.use(
+  cors({
+    origin: 'https://vite-template-delta.vercel.app',
+    credentials: true,
+  })
+);
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {

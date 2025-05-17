@@ -11,20 +11,26 @@ const assistanceRouter = require('./routes/assistanceRoutes');
 
 const app = express();
 app.use(express.static('public'));
+const allowedOrigins = [
+  'https://vite-template-delta.vercel.app',
+  'http://localhost:5000',
+  'http://nozworld.zapto.org:5000',
+];
+
 const corsOptions = {
-  origin: '*', // Allow only this origin
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow these HTTP methods
-  credentials: true, // Allow cookies to be sent
-  optionsSuccessStatus: 204, // Some legacy browsers choke on 204
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
-app.use(
-  cors({
-    origin: 'https://vite-template-delta.vercel.app',
-    credentials: true,
-  })
-);
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {

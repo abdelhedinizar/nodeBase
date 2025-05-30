@@ -25,9 +25,8 @@ route.route('/').post(async (req, res) => {
 });
 
 const startChatWithBot = async (dishes, req) => {
-  const apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   const headers = {
-    Authorization: `Bearer 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`,
+    Authorization: `Bearer ${process.env.BOT_TOKEN}`,
     'Content-Type': 'application/json',
   };
   const systemMessage1 = {
@@ -60,7 +59,7 @@ const startChatWithBot = async (dishes, req) => {
     frequency_penalty: 0,
     max_tokens: 900,
   };
-  const response = await fetch(apiUrl, {
+  const response = await fetch(process.env.BOT_URL, {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),

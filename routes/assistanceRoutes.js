@@ -25,9 +25,8 @@ route.route('/').post(async (req, res) => {
 });
 
 const startChatWithBot = async (dishes, req) => {
-  const apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   const headers = {
-    Authorization: `Bearer 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`,
+    Authorization: `Bearer ${process.env.BOT_TOKEN}`,
     'Content-Type': 'application/json',
   };
   const systemMessage1 = {
@@ -44,18 +43,23 @@ const startChatWithBot = async (dishes, req) => {
   If the user asks for vegetarian options, suggest dishes from the menu that do not contain meat, fish, or other animal products.
   You must never ask about which restaurant they are referring to. This restaurant is the only context you have. for any question, you can always refer to the menu above.`,
   };
+  const systemMessage3 = {
+    role: 'system',
+    content: `The client speaks french, so you should always respond in french, and be so friendly and respectful, and always use the polite form of address. for the first message don't talk about the menu keep it welcoming the user and asking him if he needs help, the if he asks about the menu you can use the menu above to answer his question`,
+  };
   req.body.messages.unshift(systemMessage);
   req.body.messages.unshift(systemMessage1);
   req.body.messages.unshift(systemMessage2);
+  req.body.messages.unshift(systemMessage3);
   const payload = {
-    model: 'google/gemini-2.0-flash-exp:free',
+    model: 'deepseek/deepseek-chat:free',
     messages: req.body.messages,
     temperature: 0.7,
     stream: false,
     frequency_penalty: 0,
     max_tokens: 900,
   };
-  const response = await fetch(apiUrl, {
+  const response = await fetch(process.env.BOT_URL, {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),

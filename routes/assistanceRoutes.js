@@ -8,11 +8,9 @@ route.route('/').post(async (req, res) => {
   const summarizedDishes = dishs
     .map(
       (dish, index) =>
-        `${index + 1}) the dish name is ${
-          dish.name
-        }, this is the dish ingredients ${dish.ingredients} (category : ${
-          dish.category
-        }, price : ${dish.price}£)`
+        `${index + 1}) the dish name is ${dish.name
+        }, this is the dish ingredients ${dish.ingredients} (category : ${dish.category
+        }, price : ${dish.price}€)`
     )
     .join('\n');
 
@@ -52,7 +50,7 @@ const startChatWithBot = async (dishes, req) => {
   req.body.messages.unshift(systemMessage2);
   req.body.messages.unshift(systemMessage3);
   const payload = {
-    model: 'deepseek/deepseek-chat:free',
+    model: process.env.BOT_MODEL,
     messages: req.body.messages,
     temperature: 0.7,
     stream: false,

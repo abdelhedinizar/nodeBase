@@ -8,6 +8,7 @@ const categoryRouter = require('./routes/categoryRoutes');
 const orderRouter = require('./routes/orderRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const assistanceRouter = require('./routes/assistanceRoutes');
+const contactRouter = require('./routes/contactRoutes');
 
 const app = express();
 app.use(express.static('public'));
@@ -49,6 +50,7 @@ app.use('/api/v1/categories', express.json(), categoryRouter);
 app.use('/api/v1/orders', express.json({ limit: '10mb' }), orderRouter);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/assistances', express.json(), assistanceRouter);
+app.use('/api/v1/contacts', express.json(), contactRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({

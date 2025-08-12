@@ -9,6 +9,10 @@ const OrderSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'An order must belong to a user'],
     },
+    restaurant: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Restaurant'
+    },
     dishes: [
       {
         dish: {

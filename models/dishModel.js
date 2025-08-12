@@ -1,7 +1,7 @@
-const mangoose = require('mongoose');
+const mongoose = require('mongoose');
 const Category = require('./../models/CategoryModel');
 
-const DishSchema = new mangoose.Schema(
+const DishSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -31,6 +31,10 @@ const DishSchema = new mangoose.Schema(
     price: {
       type: Number,
       required: [true, 'A dish must have a price'],
+    },
+    restaurant: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Restaurant'
     },
     ratingsAverage: {
       type: Number,
@@ -123,6 +127,6 @@ DishSchema.pre('find', function (next) {
 
 */
 
-const Dish = mangoose.model('Dishs', DishSchema);
+const Dish = mongoose.model('Dishs', DishSchema);
 
 module.exports = Dish;

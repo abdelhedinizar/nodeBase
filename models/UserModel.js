@@ -1,10 +1,9 @@
-const { default: mongoose } = require('mongoose');
-const mangoose = require('mongoose');
+const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const UserSchema = new mangoose.Schema({
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
   },
@@ -47,6 +46,10 @@ const UserSchema = new mangoose.Schema({
     type: String,
     enum: ['admin', 'Staff', 'User', 'UserWithoutAccount'],
     default: 'UserWithoutAccount',
+  },
+  restaurant: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Restaurant'
   },
   hasUserHasAccount: {
     type: Boolean,

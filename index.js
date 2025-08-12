@@ -9,12 +9,14 @@ const orderRouter = require('./routes/orderRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const assistanceRouter = require('./routes/assistanceRoutes');
 const contactRouter = require('./routes/contactRoutes');
+const restaurantRouter = require('./routes/restaurantRoutes');
 
 const app = express();
 app.use(express.static('public'));
 const allowedOrigins = [
   'https://vite-template-delta.vercel.app',
   'http://localhost:5000',
+  'http://localhost:5001',
   'http://nozworld.zapto.org:5000',
 ];
 
@@ -51,6 +53,7 @@ app.use('/api/v1/orders', express.json({ limit: '10mb' }), orderRouter);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/assistances', express.json(), assistanceRouter);
 app.use('/api/v1/contacts', express.json(), contactRouter);
+app.use('/api/v1/restaurants', express.json(), restaurantRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({

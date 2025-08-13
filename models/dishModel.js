@@ -26,7 +26,7 @@ const DishSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ['published', 'draft'],
-      default: 'Published',
+      default: 'published',
     },
     price: {
       type: Number,

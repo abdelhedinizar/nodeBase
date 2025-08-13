@@ -7,7 +7,10 @@
     "test": "mocha",
     "start": "node server.js",
     "start:prod": "NODE_ENV=production node server.js",
-    "debug": "node --inspect server.js"
+    "debug": "node --inspect server.js",
+    "relate:dishs": "node scripts/relateDishsToRestaurant.js",
+    "relate:users": "node scripts/relateUsersToRestaurant.js",
+    "relate:orders": "node scripts/relateOrdersToRestaurant.js"
   },
   "author": "",
   "license": "ISC",

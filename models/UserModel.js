@@ -144,5 +144,14 @@ UserSchema.methods.createPasswordResetToken = async function () {
   return resetToken;
 };
 
+// Always populate restaurant info when querying users
+UserSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'restaurant',
+    select: 'name address phoneNumber',
+  });
+  next();
+});
+
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

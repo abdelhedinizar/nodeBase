@@ -37,7 +37,7 @@ exports.getCheckoutSeesion = async (req, res, next) => {
     line_items,
     mode: 'payment',
     success_url: `${process.env.FRONT_URL}/dashboard/basket/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.FRONT_URL}/order-cancelled`,
+    cancel_url: `${process.env.FRONT_URL}/dashboard/basket/detail`,
     payment_method_types: ['card'],
     client_reference_id: req.params.orderID,
   });

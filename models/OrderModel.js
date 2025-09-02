@@ -13,6 +13,15 @@ const OrderSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Restaurant'
     },
+    // Add table and tableName to support frontend payload
+    table: {
+      type: String,
+      default: null,
+    },
+    tableName: {
+      type: String,
+      default: null,
+    },
     dishes: [
       {
         dish: {

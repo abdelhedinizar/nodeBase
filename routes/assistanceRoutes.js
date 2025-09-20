@@ -114,7 +114,9 @@ Do NOT place any order automatically unless the user explicitly asks.
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
+    if (response.status !== 429) {
+      throw new Error(`Rate limit exceeded! Status: ${response.status}`);
+    }
   }
   const result = await response.json();
   return result;

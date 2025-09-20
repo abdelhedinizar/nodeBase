@@ -10,6 +10,8 @@ const bookingRouter = require('./routes/bookingRoutes');
 const assistanceRouter = require('./routes/assistanceRoutes');
 const contactRouter = require('./routes/contactRoutes');
 const restaurantRouter = require('./routes/restaurantRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
+const likeRouter = require('./routes/likeRoutes');
 
 const app = express();
 app.use(express.static('public'));
@@ -54,6 +56,8 @@ app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/assistances', express.json(), assistanceRouter);
 app.use('/api/v1/contacts', express.json(), contactRouter);
 app.use('/api/v1/restaurants', express.json(), restaurantRouter);
+app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/likes', likeRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({

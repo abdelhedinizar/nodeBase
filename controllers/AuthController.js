@@ -109,6 +109,23 @@ exports.protect = async (req, res, next) => {
   }
 };
 
+
+exports.optionalAuth = async (req, res, next) => {
+  try {
+    const auth = req.headers.authorization;
+    if (auth && auth.startsWith('Bearer ')) {
+      const token = auth.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
+      if (user) req.user = user;
+    }
+  } catch (_) {
+    // ignore errors (invalid / expired token) for optional auth
+  }
+  next();
+};
+
+
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');

@@ -2,6 +2,7 @@ const Dish = require('./../models/dishModel');
 const APIFeatures = require('./../utils/APIFeatures');
 const path = require('path');
 const fs = require('fs');
+const Like = require('../models/LikeModel');
 
 const getAllDishs = async (req, res) => {
   try {
@@ -12,32 +13,52 @@ const getAllDishs = async (req, res) => {
       .paginate();
 
     const dishs = await features.query;
+
+    let likedSet = new Set();
+    if (req.user && dishs.length) {
+      const ids = dishs.map(d => d._id);
+      const likes = await Like.find({ user: req.user._id, dish: { $in: ids } }).select('dish');
+      likedSet = new Set(likes.map(l => l.dish.toString()));
+    }
+
+    const data = dishs.map(d => {
+      const obj = d.toObject({ virtuals: true });
+      obj.isLikedByMe = req.user ? likedSet.has(d._id.toString()) : false;
+      return obj;
+    });
+
     res.status(200).json({
       status: 'success',
-      length: dishs.length,
-      data: { dishs },
+      results: data.length,
+      data: { dishs: data },
     });
-  } catch (e) {
-    res.status(400).json({
-      status: 'fail',
-      message: e,
-    });
+  } catch (err) {
+    res.status(400).json({ status: 'fail', message: err.message });
   }
 };
 
 const getDishById = async (req, res) => {
   try {
     const dish = await Dish.findById(req.params.id);
+    if (!dish) {
+      return res.status(404).json({ status: 'fail', message: 'Dish not found' });
+    }
+
+    let isLikedByMe = false;
+    if (req.user) {
+      const like = await Like.findOne({ user: req.user._id, dish: dish._id }).select('_id');
+      isLikedByMe = !!like;
+    }
+
+    const obj = dish.toObject({ virtuals: true });
+    obj.isLikedByMe = isLikedByMe;
+
     res.status(200).json({
       status: 'success',
-      length: dish ? 1 : 0,
-      data: { dish },
+      data: { dish: obj },
     });
-  } catch (e) {
-    res.status(400).json({
-      status: 'error',
-      message: e,
-    });
+  } catch (err) {
+    res.status(400).json({ status: 'fail', message: err.message });
   }
 };
 

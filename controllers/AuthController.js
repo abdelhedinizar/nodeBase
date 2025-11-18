@@ -145,7 +145,7 @@ exports.getMe = async (req, res) => {
 
 exports.updateMe = async (req, res) => {
   try {
-    const { firstname,lastname, phoneNumber, address } = req.body;
+    const { firstname,lastname, phoneNumber, address, photo } = req.body;
 
     // Find the authenticated user
     const user = await User.findById(req.user._id);
@@ -160,6 +160,7 @@ exports.updateMe = async (req, res) => {
     if (firstname) user.firstname = firstname;
     if (lastname) user.lastname = lastname;
     if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (photo) user.photo = photo;
 
     if (address) {
       if (address.line1) user.address.line1 = address.line1;

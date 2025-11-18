@@ -12,6 +12,7 @@ const contactRouter = require('./routes/contactRoutes');
 const restaurantRouter = require('./routes/restaurantRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const likeRouter = require('./routes/likeRoutes');
+const reviewCommentRouter = require('./routes/reviewCommentRoutes');
 
 const app = express();
 app.use(express.static('public'));
@@ -48,7 +49,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/v1/users', express.json(), userRouter);
+app.use('/api/v1/users', express.json({ limit: '10mb' }), userRouter);
 app.use('/api/v1/dishs', express.json({ limit: '10mb' }), dishRouter);
 app.use('/api/v1/categories', express.json(), categoryRouter);
 app.use('/api/v1/orders', express.json({ limit: '10mb' }), orderRouter);
@@ -56,8 +57,9 @@ app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/assistances', express.json(), assistanceRouter);
 app.use('/api/v1/contacts', express.json(), contactRouter);
 app.use('/api/v1/restaurants', express.json(), restaurantRouter);
-app.use('/api/v1/reviews', reviewRouter);
-app.use('/api/v1/likes', likeRouter);
+app.use('/api/v1/reviews', express.json(), reviewRouter);
+app.use('/api/v1/likes', express.json(), likeRouter);
+app.use('/api/v1/review-comments', express.json(), reviewCommentRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({

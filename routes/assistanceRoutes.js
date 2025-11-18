@@ -114,7 +114,7 @@ Do NOT place any order automatically unless the user explicitly asks.
   });
 
   if (!response.ok) {
-    if (response.status !== 429) {
+    if (response.status !== 429 && response.status !== 502) {
       throw new Error(`Rate limit exceeded! Status: ${response.status}`);
     }
   }

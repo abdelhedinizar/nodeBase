@@ -25,19 +25,25 @@ const ReviewSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    media:{
+      type: String,
+      default: '',
+    },
     createdAt: {
       type: Date,
       default: Date.now,
     },
     updatedAt: Date,
+    commentsCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     versionKey: false,
   }
 );
 
-// One review per user per dish
-ReviewSchema.index({ dish: 1, user: 1 }, { unique: true });
 
 ReviewSchema.pre('save', function (next) {
   this.updatedAt = Date.now();

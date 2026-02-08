@@ -2,29 +2,24 @@ const User = require('./../models/UserModel');
 const jwt = require('jsonwebtoken');
 const sendEmail = require('./../utils/email');
 const crypto = require('crypto');
-
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRED_IN,
-  });
-};
+const { signToken } = require('./../utils/jwt');
 
 exports.signup = async (req, res, next) => {
   try {
     reqUser = req.body.password
       ? {
-          firstname: req.body.firstname,
-          lastname: req.body.lastname,
-          email: req.body.email,
-          password: req.body.password ? req.body.password : '',
-          confirmPassword: req.body.confirmPassword
-            ? req.body.confirmPassword
-            : '',
-        }
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        email: req.body.email,
+        password: req.body.password ? req.body.password : '',
+        confirmPassword: req.body.confirmPassword
+          ? req.body.confirmPassword
+          : '',
+      }
       : {
-          name: req.body.name,
-          email: req.body.email,
-        };
+        name: req.body.name,
+        email: req.body.email,
+      };
     const newUser = await User.create(reqUser);
     const token = signToken(newUser._id);
     res.status(201).json({
@@ -66,7 +61,7 @@ exports.signin = async (req, res, next) => {
       status: 'success',
       token,
     });
-  } catch (e) {}
+  } catch (e) { }
 };
 
 exports.protect = async (req, res, next) => {
@@ -145,7 +140,7 @@ exports.getMe = async (req, res) => {
 
 exports.updateMe = async (req, res) => {
   try {
-    const { firstname,lastname, phoneNumber, address, photo } = req.body;
+    const { firstname, lastname, phoneNumber, address, photo } = req.body;
 
     // Find the authenticated user
     const user = await User.findById(req.user._id);

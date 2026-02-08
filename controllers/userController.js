@@ -1,5 +1,6 @@
 const User = require('./../models/UserModel');
 const APIFeatures = require('./../utils/APIFeatures');
+const { signToken } = require('./../utils/jwt');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -138,6 +139,23 @@ const deleteUsers = async (req, res) => {
   }
 };
 
+const getGuestUser = async (req, res) => {
+  try {
+    const guestUser = await User.findOne({ name: 'Guest User' });
+    res.status(200).json({
+      status: 'success',
+      data: { user: guestUser,
+        token: signToken(guestUser._id)
+       },
+    });
+  } catch (e) {
+    res.status(400).json({
+      status: 'fail',
+      message: e,
+    });
+  }
+};
+
 const getUserByEmail = (req, res) => {
   if (!req.email) {
     res.status(400).send('Please provide an email');
@@ -156,4 +174,5 @@ module.exports = {
   updateUser,
   deleteUser,
   deleteUsers,
+  getGuestUser,
 };

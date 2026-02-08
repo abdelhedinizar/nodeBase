@@ -6,6 +6,7 @@ const {
   updateUser,
   deleteUser,
   deleteUsers,
+  getGuestUser,
 } = require('../controllers/userController');
 const authController = require('../controllers/AuthController');
 
@@ -33,6 +34,9 @@ route
   .get(authController.protect, getAllUsers)
   .post(authController.protect, createUser)
   .delete(authController.protect, deleteUsers);
+
+route.route('/guest_user').get(getGuestUser);
+
 route
   .route('/:id')
   .get(authController.protect, getUserById)
